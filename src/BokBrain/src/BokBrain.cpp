@@ -18,12 +18,12 @@
 
 int main(int argc, char* argv[])
 {
-    // Initialize Google's logging library.
+    // Initialise Google's logging library.
     google::InitGoogleLogging(argv[0]);
 
     DLOG(INFO) << "BokBrain waking...";
 
-    DLOG(INFO) << "Initializing random number generator.";
+    DLOG(INFO) << "Initialising random number generator.";
     srand(time(NULL));
 
     DLOG(INFO) << "Creating artificial neural network.";
@@ -39,6 +39,14 @@ int main(int argc, char* argv[])
 
     DLOG(INFO) << "Creating genetic strains.";
     Genetic brains = Genetic(10);
+    
+    double aInput[] = {0.0, 1.0};
+    double aOutput[] = {1.0};
+    vector<double> input;
+    vector<double> output;
+    input.assign(aInput, aInput + 1);
+    output.assign(aOutput, aOutput);
+    brains.evolve(input, output);
     
     return EXIT_SUCCESS;
 }

@@ -19,7 +19,6 @@ public:
     //Sizes
     unsigned int nInputs;
 
-
     vector<double> inputs;
     vector<double> weights;
     double output;

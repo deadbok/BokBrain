@@ -21,12 +21,14 @@ public:
     vector<vector<Neuron> > hiddens;
     vector<Neuron> outputs;
 
+    NNet(void);
     NNet(unsigned int nInputs, unsigned int nHidden, unsigned int hiddenNeurons, unsigned int nOutputs);
     double activation(double in);
     unsigned int updateLayer(vector<Neuron> &layer);
     void feedForward(vector<Neuron> &source, vector<Neuron> &target);
     unsigned int update(void);
     vector<double> getWeights(void);
+    void setWeights(vector<double> &weights);
     virtual ~NNet();
 };
 

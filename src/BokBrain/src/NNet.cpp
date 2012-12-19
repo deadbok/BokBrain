@@ -5,13 +5,19 @@
  *      Author: oblivion
  */
 #include <cmath>
+#include <stdexcept>
 #include <glog/logging.h>
 #include <bits/stl_vector.h>
 #include "NNet.h"
 
+NNet::NNet(void)
+{
+    DLOG(INFO) << "NNet constructor.";
+}
+
 NNet::NNet(unsigned int nInputs, unsigned int nHidden, unsigned int hiddenNeurons, unsigned int nOutputs)
 {
-    //Initialize the input and layer
+    //Initialise the input and layer
     DLOG(INFO) << "Creating input layer.";
     for (unsigned int i = 0; i < nInputs; i++)
     {
@@ -19,7 +25,7 @@ NNet::NNet(unsigned int nInputs, unsigned int nHidden, unsigned int hiddenNeuron
         this->inputs.push_back(Neuron(1));
     }
 
-    //Initialize the hidden layers
+    //Initialise the hidden layers
     DLOG(INFO) << "Creating hidden layer.";
     for (unsigned int i = 0; i < nHidden; i++)
     {
@@ -130,6 +136,7 @@ unsigned int NNet::update(void)
 
 vector<double> NNet::getWeights(void)
 {
+    DLOG(INFO) << "Getting weights.";
     vector<double> ret;
 
     //Assemble the weights from the input layer
@@ -152,6 +159,70 @@ vector<double> NNet::getWeights(void)
         ret.insert(ret.end(), this->outputs[i].weights.begin(), this->outputs[i].weights.end());
     }
     return(ret);
+}
+
+void NNet::setWeights(vector<double> &weights)
+{
+    DLOG(INFO) << "Setting weights.";    
+    unsigned int nWeights = 0;
+    
+    DLOG(INFO) << "Checking for matching data size.";
+    //Find the number of weights in the input layer
+    for (unsigned int i = 0; this->inputs.size(); i++)
+    {
+        nWeights += this->inputs[i].weights.size();
+    }
+
+    //Find the number of weights for all hidden layers
+    //For each layer
+    for (unsigned int i = 0; this->hiddens.size(); i++)
+    {
+        //For each neuron
+        for (unsigned int j = 0; this->hiddens[i].size(); j++)
+        {
+            nWeights += this->hiddens[i][j].weights.size();
+        }
+    }
+    
+    //Find the number of weights in the output layer
+    for (unsigned int i = 0; this->outputs.size(); i++)
+    {
+        nWeights += this->outputs[i].weights.size();
+    }
+
+    //Check if the number of weights corresponds with the input
+    if (nWeights != weights.size())
+    {
+        DLOG(ERROR) << "Size of weights does not match size of the net.";
+        throw std::length_error("Size of weights does not match size of the net.");
+    }
+    
+    
+    DLOG(INFO) << "Assign weights.";
+    //Keep an index into the weights
+    unsigned int iWeights = 0;
+
+    //Assign weights to the input layer    
+    for (unsigned int i = 0; this->inputs.size(); i++)
+    {
+        unsigned int next = iWeights + this->inputs[i].weights.size();
+        this->inputs[i].weights.assign(weights.begin() + iWeights, weights.begin() + (next-1));
+        iWeights = next;
+    }
+
+    //Assign weights to the hidden layer(s)
+    //Layers    
+    for (unsigned int i = 0; this->hiddens.size(); i++)
+    {
+        //Neurons
+        for (unsigned int j = 0; this->hiddens[i].size(); j++)
+        {
+            unsigned int next = iWeights + this->hiddens[i][j].weights.size();
+            this->hiddens[i][j].weights.assign(weights.begin() + iWeights, weights.begin() + (next-1));
+            iWeights = next;
+        }
+    }
+
 }
 
 NNet::~NNet()
