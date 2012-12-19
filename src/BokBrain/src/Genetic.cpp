@@ -18,6 +18,7 @@ Genetic::Genetic(unsigned int nStrains)
 void Genetic::fitness(vector<double> &result)
 {
     DLOG(INFO) << "Calculating fitness:";
+    this->fitnesses.clear();
     for (unsigned int i = 0; i < this->nStrains; i++)
     {
         double sum = 0;
@@ -27,6 +28,7 @@ void Genetic::fitness(vector<double> &result)
             sum += result[j] - this->outputs[i][j];
         }
         sum /= (double) result.size();
+        this->fitnesses.push_back(sum);
         DLOG(INFO) << " " << i << ": " << sum;
     }
 }

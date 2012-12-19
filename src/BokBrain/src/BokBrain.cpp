@@ -10,6 +10,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 #include <ctime>
 #include <iostream>
 #include <glog/logging.h>
@@ -37,16 +38,23 @@ int main(int argc, char* argv[])
         std::cout << neuron;
     }
 
-    DLOG(INFO) << "Creating genetic strains.";
-    Genetic brains = Genetic(10);
-    
-    double aInput[] = {0.0, 1.0};
-    double aOutput[] = {1.0};
-    vector<double> input;
-    vector<double> output;
-    input.assign(aInput, aInput + 1);
-    output.assign(aOutput, aOutput);
-    brains.evolve(input, output);
-    
+    try
+    {    
+        DLOG(INFO) << "Creating genetic strains.";
+        Genetic brains = Genetic(10);
+
+        double aInput[] = {0.0, 1.0};
+        double aOutput[] = {1.0};
+        vector<double> input;
+        vector<double> output;
+        input.assign(aInput, aInput + 1);
+        output.assign(aOutput, aOutput);
+        brains.evolve(input, output);
+    }
+    catch(exception& e)
+    {
+        DLOG(ERROR) << e.what();
+        cout << e.what() << endl;
+    }
     return EXIT_SUCCESS;
 }
